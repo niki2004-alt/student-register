@@ -49,7 +49,7 @@
                         <button onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">
                             Delete
                         </button>
-                        <a href="{{ route('students.detail', $student->major->id) }}" class="btn btn-sm btn-primary">Detail</a>
+                        <a href="{{ url('students/' . $student->id . '/detail') }}" class="btn btn-sm btn-primary">Detail</a>
                     </form>
                 </td>
             </tr>

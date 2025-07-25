@@ -12,12 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
+            $table->id(); // Auto-increment primary key
             $table->string('number');
             $table->string('name');
-            $table->enum('gender', ['male','female','LGBT']);
-            $table->string('year'); 
-            $table->string('major');
+            $table->enum('gender', ['male', 'female', 'LGBT']);
+            $table->string('year');
+            $table->unsignedBigInteger('major_id'); // Foreign key column
             $table->timestamps();
+
+            // Add foreign key constraint
+            $table->foreign('major_id')->references('id')->on('major_subject')->onDelete('cascade');
         });
     }
 
