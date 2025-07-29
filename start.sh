@@ -1,9 +1,29 @@
-#!/bin/bash
+#!/bin/sh
+
+# Load .env values into shell
+export $(grep -v '^#' .env | xargs)
+
 service mariadb start
 
-mysql -uroot -e "CREATE DATABASE IF NOT EXISTS student_register_app;"
-mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '';"
-mysql -uroot -e "GRANT ALL ON student_register_app.* TO 'root'@'localhost';"
+# Wait until the DB is ready
+until nc -z -v -w30 127.0.0.1 3306
+do
+  echo "Waiting for MySQL..."
+  sleep 5
+done
 
+# Create database and user if not exist
+mysql -u root <<-EOSQL
+  CREATE DATABASE IF NOT EXISTS ${DB_DATABASE} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  CREATE USER IF NOT EXISTS '${DB_USERNAME}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+  GRANT ALL PRIVILEGES ON ${DB_DATABASE}.* TO '${DB_USERNAME}'@'%';
+  FLUSH PRIVILEGES;
+EOSQL
+
+# Run Laravel setup commands
+php artisan key:generate
+php artisan migrate --force
+
+# Start PHP-FPM and Nginx
 php-fpm &
-nginx -g "daemon off;"
+nginx -g 'daemon off;'

@@ -10,11 +10,19 @@ RUN apt-get update && apt-get install -y \
     nginx \
     mariadb-server \
     libzip-dev \
+    libonig-dev \
+    libxml2-dev \
+    build-essential \
+    default-mysql-client \
+    netcat-openbsd\
     zip unzip git \
  && rm -rf /var/lib/apt/lists/*
 
+RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl
+
+
 # Optional: Install PHP extensions (uncomment as needed)
-# RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl
+#RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -35,6 +43,8 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 RUN rm /etc/nginx/sites-enabled/default
 COPY nginx.conf /etc/nginx/sites-available/laravel.conf
 RUN ln -s /etc/nginx/sites-available/laravel.conf /etc/nginx/sites-enabled/
+
+# Start MySQL service
 
 # Copy startup script
 COPY start.sh /start.sh
