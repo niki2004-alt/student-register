@@ -23,6 +23,9 @@ EOSQL
 # Run Laravel setup commands
 php artisan key:generate
 php artisan migrate --force
+# Run database seed script
+echo "Running Laravel migrations and seeders..."
+sh ./seed.sh
 
 # Start PHP-FPM and Nginx
 php-fpm &
