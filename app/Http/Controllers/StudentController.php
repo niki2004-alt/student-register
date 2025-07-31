@@ -15,7 +15,11 @@ class StudentController extends Controller
     {
         $students = Student::with('major')->get();
         $majors = Major::all(); 
-        return view('students.index', compact('students', 'majors'));
+        return view('students.index', compact([
+    'students' => $students,
+    'majors' => $majors,
+]
+));
     }
 
     /**
